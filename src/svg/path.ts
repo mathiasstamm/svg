@@ -552,8 +552,8 @@ export class Path extends Element {
       const cmd = subpath[i];
       switch (cmd.type) {
         case 'L':
-          console.log(`Line to (${(cmd as PointCommand).x}, ${(cmd as PointCommand).y})`);
-          this.p.vertex((cmd as PointCommand).x, (cmd as PointCommand).y);
+          console.log(`Line to (${(cmd as LineCommand).x}, ${(cmd as LineCommand).y})`);
+          this.p.vertex((cmd as LineCommand).x, (cmd as LineCommand).y);
           break;
         case 'C': {
           const bezierCmd = cmd as CubicBezierCommand;
