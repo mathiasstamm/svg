@@ -1,0 +1,8 @@
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+  <rect x="10" y="10" width="50" height="50" fill="red" stroke="black" stroke-width="2"/>
+  <circle cx="100" cy="100" r="30" fill="blue"/>
+  <path d="M 150 150 L 170 170 L 190 150 Z" fill="green" stroke="black"/>
+  <g transform="translate(50,50)">
+    <rect x="0" y="0" width="20" height="20" fill="yellow"/>
+  </g>
+</svg>
