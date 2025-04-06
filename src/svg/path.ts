@@ -58,7 +58,6 @@ export class Path extends Element {
     const pathData = this.xmlElement.getString('d');
     if (!pathData) return;
 
-    // Better regex that handles all valid path data formats
     // This handles comma/space separation and scientific notation
     const commandRegex = /([MLHVCSQTAZmlhvcsqtaz])([^MLHVCSQTAZmlhvcsqtaz]*)/g;
     let match;
@@ -486,8 +485,10 @@ export class Path extends Element {
   }
 
   public draw(): void {
-    if (this.commands.length === 0) return;
-    
+    if (this.commands.length === 0) {
+      return;
+    }
+
     this.p.push();
 
     if (this.transform) {
@@ -496,99 +497,104 @@ export class Path extends Element {
 
     this.applyStyles();
 
-    // Draw each subpath separately
     let currentSubpath: PathCommand[] = [];
     let currentPathStarted = false;
-    
+
     for (let i = 0; i < this.commands.length; i++) {
       const cmd = this.commands[i];
-      
-      // Start a new subpath when we encounter a move command
+      console.log(`Processing command: ${cmd.type}`, cmd);
+
       if (cmd.type === 'M') {
-        // End previous subpath if one exists
         if (currentPathStarted) {
+          console.log("Ending current subpath...");
           this.drawSubpath(currentSubpath);
         }
-        
-        // Start a new subpath
+        console.log("Starting new subpath...");
         currentSubpath = [cmd];
         currentPathStarted = true;
-      } 
-      // Add to current subpath
-      else if (currentPathStarted) {
+      } else if (currentPathStarted) {
         currentSubpath.push(cmd);
       }
     }
-    
-    // Draw the last subpath if it exists
+
     if (currentSubpath.length > 0) {
+      console.log("Drawing final subpath...");
       this.drawSubpath(currentSubpath);
     }
-    
+
+    console.log("Finished drawing path.");
     this.p.pop();
   }
 
   private drawSubpath(subpath: PathCommand[]): void {
-    if (subpath.length === 0) return;
-    
+    if (subpath.length === 0) {
+      console.log("Empty subpath, skipping...");
+      return;
+    }
+
+    console.log("Drawing subpath:", subpath);
+
     let isClosed = false;
-    
-    // Check if path is closed
     if (subpath[subpath.length - 1].type === 'Z') {
       isClosed = true;
+      console.log("Subpath is closed.");
     }
-    
+
     this.p.beginShape();
-    
-    // First command should be a move
+
     if (subpath[0].type === 'M') {
       const firstCmd = subpath[0] as PointCommand;
+      console.log(`Move to (${firstCmd.x}, ${firstCmd.y})`);
       this.p.vertex(firstCmd.x, firstCmd.y);
     }
-    
-    // Process the rest of the commands
+
     for (let i = 1; i < subpath.length; i++) {
       const cmd = subpath[i];
-      
       switch (cmd.type) {
         case 'L':
+          console.log(`Line to (${(cmd as PointCommand).x}, ${(cmd as PointCommand).y})`);
           this.p.vertex((cmd as PointCommand).x, (cmd as PointCommand).y);
           break;
-          
         case 'C': {
           const bezierCmd = cmd as CubicBezierCommand;
+          console.log(
+            `Cubic Bézier to (${bezierCmd.x}, ${bezierCmd.y}) with control points (${bezierCmd.cp1x}, ${bezierCmd.cp1y}) and (${bezierCmd.cp2x}, ${bezierCmd.cp2y})`
+          );
           this.p.bezierVertex(
-            bezierCmd.cp1x, bezierCmd.cp1y, 
-            bezierCmd.cp2x, bezierCmd.cp2y, 
+            bezierCmd.cp1x, bezierCmd.cp1y,
+            bezierCmd.cp2x, bezierCmd.cp2y,
             bezierCmd.x, bezierCmd.y
           );
           break;
         }
-          
         case 'Q': {
           const quadCmd = cmd as QuadraticBezierCommand;
+          console.log(
+            `Quadratic Bézier to (${quadCmd.x}, ${quadCmd.y}) with control point (${quadCmd.cx}, ${quadCmd.cy})`
+          );
           this.p.quadraticVertex(
-            quadCmd.cx, quadCmd.cy, 
+            quadCmd.cx, quadCmd.cy,
             quadCmd.x, quadCmd.y
           );
           break;
         }
-          
         case 'A': {
           const arcCmd = cmd as ArcCommand;
+          console.log(
+            `Arc to (${arcCmd.x}, ${arcCmd.y}) with radii (${arcCmd.rx}, ${arcCmd.ry}), rotation ${arcCmd.xAxisRotation}, largeArcFlag ${arcCmd.largeArcFlag}, sweepFlag ${arcCmd.sweepFlag}`
+          );
           const prevPoint = this.getPreviousPointForCommand(subpath, i);
           if (prevPoint) {
             this.drawArc(prevPoint, arcCmd);
           }
           break;
         }
-          
         case 'Z':
-          // We'll close the shape at the end
+          console.log("Close path command.");
           break;
       }
     }
-    
+
     this.p.endShape(isClosed ? this.p.CLOSE : undefined);
   }
 
@@ -797,8 +803,7 @@ export class Path extends Element {
   public getDebugInfo(): string[] {
     const pathData = this.xmlElement.getString('d');
     return [
-      `Path: ${pathData ? pathData.substring(0, 50) + (pathData.length > 50 ? '...' : '') : 'No path data'}`,
-      `Commands: ${this.commands.length}`
+      `Path(${this.commands.length}): ${pathData ? pathData.substring(0, 80) + (pathData.length > 80 ? '...' : '') : 'No path data'}`,
     ];
   }
 }

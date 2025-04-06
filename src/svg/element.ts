@@ -51,6 +51,13 @@ export abstract class Element {
     }
   }
 
+  protected fixCoordinate(value: string | null): number | null {
+    if (!value) return null;
+    const fixedValue = value.replace(/(?<!\d)\./g, '0.').replace(/(?<=\d)-/g, ' -');
+    const parsed = parseFloat(fixedValue);
+    return isNaN(parsed) ? null : parsed;
+  }
+
   public abstract draw(): void;
 
   public getDebugInfo(): string[] {

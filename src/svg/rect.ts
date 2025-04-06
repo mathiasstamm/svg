@@ -26,13 +26,6 @@ export class Rect extends Element {
     this.p.pop();
   }
 
-  private fixCoordinate(value: string | null): number | null {
-    if (!value) return null;
-    const fixedValue = value.replace(/(?<!\d)\./g, '0.').replace(/(?<=\d)-/g, ' -');
-    const parsed = parseFloat(fixedValue);
-    return isNaN(parsed) ? null : parsed;
-  }
-
   public getDebugInfo(): string[] {
     const x = this.fixCoordinate(this.xmlElement.getString('x')) || 0;
     const y = this.fixCoordinate(this.xmlElement.getString('y')) || 0;

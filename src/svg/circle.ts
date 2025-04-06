@@ -25,13 +25,6 @@ export class Circle extends Element {
     this.p.pop();
   }
 
-  private fixCoordinate(value: string | null): number | null {
-    if (!value) return null;
-    const fixedValue = value.replace(/(?<!\d)\./g, '0.').replace(/(?<=\d)-/g, ' -');
-    const parsed = parseFloat(fixedValue);
-    return isNaN(parsed) ? null : parsed;
-  }
-
   public getDebugInfo(): string[] {
     const cx = this.fixCoordinate(this.xmlElement.getString('cx')) || 0;
     const cy = this.fixCoordinate(this.xmlElement.getString('cy')) || 0;
