@@ -1,4 +1,4 @@
-import p5, { XML } from "p5";
+import p5 from "p5";
 import { Style } from "./style";
 
 export abstract class Element {
@@ -54,6 +54,6 @@ export abstract class Element {
   public abstract draw(): void;
 
   public getDebugInfo(): string[] {
-    return [`Element: ${this.xmlElement.getName()}`];
-  }
+    return [`Element: ${this.xmlElement.getName()}`];      
+    }
 }
