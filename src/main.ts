@@ -13,7 +13,7 @@ const sketch = (p: p5) => {
   };
 
   p.preload = () => {
-    xml = p.loadXML('svg/assets/example.svg') as p5.XML;
+    xml = p.loadXML('assets/example.svg') as p5.XML;
   };
 
   const loadSVGFromFile = (svgContent: string) => {
