@@ -2,6 +2,8 @@ import p5 from 'p5';
 import { Root } from './svg/root';
 import { initFileUploadHandler } from './fileUploadHandler';
 
+const base = window.location.pathname;
+
 const sketch = (p: p5) => {
   let svg: Root | undefined;
   let xml: p5.XML | undefined;
@@ -13,7 +15,7 @@ const sketch = (p: p5) => {
   };
 
   p.preload = () => {
-    xml = p.loadXML('svg/assets/example.svg') as p5.XML;
+    xml = p.loadXML(`${base}/example.svg`) as p5.XML;
   };
 
   const loadSVGFromFile = (svgContent: string) => {
